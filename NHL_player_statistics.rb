@@ -4,7 +4,12 @@ require 'data_mapper'
 require 'sqlite3'
 require './app_modules'
 
-DataMapper.setup(:default, 'sqlite::memory:')
+DataMapper.setup(:default, {
+    adapter: 'sqlite3',
+    database: 'identifier.sqlite',
+    username: 'Frikker',
+    password: 'Diving000',
+})
 DataMapper::Property::String.length(255)
 
 DataMapper.finalize
@@ -32,5 +37,6 @@ def main_menu(i)
     main_menu(i)
   end
 end
+
 i = true
 i = main_menu(true) while i

@@ -1,4 +1,3 @@
-
 # table Conference
 class Conference
   include DataMapper::Resource
@@ -44,7 +43,7 @@ class Team
   belongs_to :division
 
   def register(name, couch, conference, division)
-    @team = Team.create(name: name, couch_name: couch, conference: conference,
+    @team = Team.create(name: name, coach_name: couch, conference: conference,
                         division: division)
     @team.save
   end
@@ -57,16 +56,16 @@ class Player
   property :id,         Serial
   property :name,       String
   property :age,        Integer
-  property :position,   String
   property :number,     Integer
 
   has Infinity, :achievements
 
   belongs_to :team
+  belongs_to :position
 
   def register(name, age, position, number, team)
     @player = Player.create(name: name, age: age, position: position,
-                            number: number, team: Team.get(team))
+                            number: number, team: Team.get(team: team))
     @player.save
   end
 end
@@ -95,5 +94,19 @@ class TeamMatch
   def register(opponent, team, date = Date.today)
     @match = TeamMatch.create(opponent: opponent, date: date, team: team)
     @match.save
+  end
+end
+
+class Position
+  include DataMapper::Resource
+
+  property :id, Serial
+  property :name, String
+
+  has Infinity, :players
+
+  def register(name)
+    @position = Position.create(name: name)
+    @position.save
   end
 end
