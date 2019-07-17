@@ -1,38 +1,40 @@
 require 'rubygems'
 require 'data_mapper'
+require 'sqlite3'
 
-# Main module of console application for
 DataMapper.setup(:default, 'sqlite::memory:')
 DataMapper::Property::String.length(255)
-DataMapper.auto_migrate!
 
+# table Conference
 class Conference
   include DataMapper::Resource
 
   property :id, Serial
   property :name, String
 
-  belongs_to :team
+  has Infinity, :teams
 
   def register(name)
-    @match = Conference.create(name: name)
-    @match.save
+    @conference = Conference.create(name: name)
+    @conference.save
   end
 end
 
+# table Division
 class Division
   include DataMapper::Resource
 
   property :id, Serial
   property :name, String
 
-  belongs_to :team
+  has Infinity, :teams
 
   def register(name)
-    @match = Division.create(name: name)
-    @match.save
+    @division = Division.create(name: name)
+    @division.save
   end
 end
+
 # table Team that keep information about all of teams of the league
 class Team
   include DataMapper::Resource
@@ -41,13 +43,16 @@ class Team
   property :name,       String
   property :coach_name, String
 
-  has Infinity, :teamsmatches
-  has 1, :conferences
-  has 1, :divisions
+  has Infinity, :team_matches
+  has Infinity, :players
 
-  belongs_to :player
+  belongs_to :conference
+  belongs_to :division
+
   def register(name, couch, conference, division)
-    @team = Team.create()
+    @team = Team.create(name: name, couch_name: couch, conference: conference,
+                        division: division)
+    @team.save
   end
 end
 
@@ -58,12 +63,18 @@ class Player
   property :id,         Serial
   property :name,       String
   property :age,        Integer
-  property :height,     Float
   property :position,   String
   property :number,     Integer
 
   has Infinity, :achievements
-  has 1, :teams
+
+  belongs_to :team
+
+  def register(name, age, position, number, team)
+    @player = Player.create(name: name, age: age, position: position,
+                            number: number, team: Team.get(team))
+    @player.save
+  end
 end
 
 # table Achievements with any possible achievements for player
@@ -78,19 +89,55 @@ class Achievement
 end
 
 # table Match with information about opponent and date of team's match
-class TeamsMatch
+class TeamMatch
   include DataMapper::Resource
 
   property :id, Serial
-  property :opponent, Team
+  property :opponent, Team.class
   property :date, Date
 
   belongs_to :team
 
-  def register(opponent, date = Date.today)
-    @match = Match.create(opponent: opponent, date: date)
+  def register(opponent, team, date = Date.today)
+    @match = TeamMatch.create(opponent: opponent, date: date, team: team)
     @match.save
   end
 end
 
 DataMapper.finalize
+DataMapper.auto_upgrade!
+
+puts 'Hello! Choose the option and press "Enter"'
+
+def main_menu
+  puts '1. Enter new information to DB'
+  puts '2. Check information about player'
+  puts '3. Check top-5 players in any achievement'
+end
+
+main_menu
+insert_data = gets.chomp
+
+case insert_data
+when 1
+  fill_database
+when 2
+  check_player
+when 3
+  top_5
+else
+  puts 'You put wrong option. Please try again'
+  main_menu
+end
+#@todo
+def fill_database
+
+end
+#@todo
+def check_player
+
+end
+#@todo
+def top_5
+
+end
