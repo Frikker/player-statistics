@@ -8,7 +8,7 @@ DataMapper.setup(:default, {
     adapter: 'sqlite3',
     database: 'identifier.sqlite',
     username: 'Frikker',
-    password: 'Diving000',
+    password: '123456',
 })
 DataMapper::Property::String.length(255)
 
