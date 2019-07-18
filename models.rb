@@ -58,14 +58,12 @@ class Player
   property :age,        Integer
   property :number,     Integer
 
-  has Infinity, :achievements
-
   belongs_to :team
   belongs_to :position
 
   def register(name, age, position, number, team)
     @player = Player.create(name: name, age: age, position: position,
-                            number: number, team: Team.get(team: team))
+                            number: number, team: team)
     @player.save
   end
 end
@@ -76,9 +74,12 @@ class Achievement
 
   property :id,       Serial
   property :name,     String
-  property :achieved, Boolean, default: false
+  property :countable, Boolean
 
-  belongs_to :player
+  def register(name, countable)
+    @achievement = Achievement.create(name: name, countable: countable)
+    @achievement.save
+  end
 end
 
 # table Match with information about opponent and date of team's match

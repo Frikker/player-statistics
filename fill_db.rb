@@ -14,18 +14,6 @@ def fill_database
   filling_case(insert_data)
 end
 
-# @todo
-def check_player
-  stats = Achievement.all(order: @id)
-  stats.each do |stat|
-    puts stat.id + '. ' + stat.name
-  end
-end
-
-# @todo
-def top_5; end
-
-#@todo
 def filling_case(data)
   case data
   when 1
@@ -97,11 +85,31 @@ def enter_new_player
   puts 'On which position he plays:'
   position = positions.get(list_the_collection(positions))
 
-  puts 'Enter the name of team that he plays'
-  team = gets.chomp
-  Team.
+  teams = Team.all(order: @id)
+  puts 'Choose team'
+  team = teams.get(list_the_collection(teams))
 
-  Player.new.register(name, age, position, number, team + '*')
+  Player.new.register(name, age, position, number, team)
+end
+
+def enter_new_achievement
+  puts 'Enter the name of achievement'
+  name = gets.chomp
+  i = true
+  puts 'Is it countable? (y/n)'
+  while i
+    countable = gets.chomp
+    i = false
+    if countable == 'y'
+      countable_achieve = true
+    elsif countable == 'n'
+      countable_achieve = false
+    else
+      puts 'You put wrong option. Please try again'
+      i = true
+    end
+  end
+  Achievement.new.register(name, countable_achieve)
 end
 
 def list_the_collection(collection)

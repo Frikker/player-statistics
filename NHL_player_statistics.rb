@@ -2,7 +2,9 @@
 require 'rubygems'
 require 'data_mapper'
 require 'sqlite3'
-require './app_modules'
+require './fill_db'
+require './check_module'
+require './top_5_module'
 
 DataMapper.setup(:default, {
     adapter: 'sqlite3',
