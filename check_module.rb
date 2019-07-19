@@ -8,6 +8,6 @@ def check_player
   if achievement_query.empty?
     puts "#{player.name} doesn't achieve this stats"
   else
-    puts "#{player.name} achieved this stat for #{achievement_query.count} times" + pluralize
+    puts "#{player.name} achieved this stat for #{achievement_query.count} times"
   end
 end
