@@ -59,21 +59,8 @@ end
 def enter_new_achievement
   puts 'Enter the name of achievement'
   name = gets.chomp
-  i = true
   puts 'Is it countable? (y/n)'
-  while i
-    countable = gets.chomp
-    i = false
-    if countable == 'y'
-      countable_achieve = true
-    elsif countable == 'n'
-      countable_achieve = false
-    else
-      puts 'You put wrong option. Please try again'
-      i = true
-    end
-  end
-  Achievement.new.register(name, countable_achieve)
+  Achievement.new.register(name, true_false_check)
 end
 
 def enter_new_match
@@ -91,34 +78,50 @@ def enter_new_match
 end
 
 def enter_player_statistic
-  team = list_the_collection(Team.get(order: @id))
-  match = list_the_collection(TeamMatch.get(team: team, order: @id))
-  player = list_the_collection(Player.get(team: team, order: @id))
-  achievement = list_the_collection(Achievement.get(order: @id))
+  team = list_the_collection(Team.all(order: @id))
+  match = list_the_collection(TeamMatch.all(team: team, order: @id) + TeamMatch.all(opponent: team.id))
+  player = list_the_collection(Player.all(team: team, order: @id))
+  achievement = list_the_collection(Achievement.all(order: @id))
   if achievement.countable
     puts 'Enter the Value'
     value = gets.chomp
     PlayerStatistic.new.register(player, match, achievement, value)
   else
     puts 'Did he achieve it: (y/n)'
-    achieved = gets.chomp
-    PlayerStatistic.new.register(player, match, achievement, 0, achieved)
+    PlayerStatistic.new.register(player, match, achievement, 0, true_false_check)
   end
 end
 
 def list_the_collection(collection)
   puts "Select #{collection.name}"
   collection.each do |col|
-    puts col.id.to_s + '. ' + col.name
+    puts (collection.index(col) + 1).to_s + '. ' + col.name
   end
   i = true
   while i
     collection_id = gets.chomp.to_i
     i = false
-    unless (1..collection[-1].id).cover?(collection_id)
+    unless (1..(collection.index(collection[-1]) + 1)).cover?(collection_id)
       puts 'You put wrong option. Please try again'
       i = true
     end
   end
-  collection.get(collection_id)
+  collection[collection_id-1]
+end
+
+def true_false_check
+  i = true
+  while i
+    countable = gets.chomp
+    i = false
+    if countable == 'y'
+      countable_achieve = true
+    elsif countable == 'n'
+      countable_achieve = false
+    else
+      puts 'You put wrong option. Please try again'
+      i = true
+    end
+  end
+  countable_achieve
 end

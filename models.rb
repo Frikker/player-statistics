@@ -56,13 +56,15 @@ class TeamMatch
   property :id, Serial
   property :opponent, Integer
   property :date, Date
+  property :name, String
 
   has Infinity, :player_statistics
 
   belongs_to :team
 
   def register(team, opponent, date = Date.today)
-    @match = TeamMatch.create(opponent: opponent, date: date, team: team)
+    name = "#{team.name} vs. #{Team.get(opponent).name}. date"
+    @match = TeamMatch.create(name: name, opponent: opponent, date: date, team: team)
     @match.save
   end
 end
@@ -94,7 +96,7 @@ class PlayerStatistic
 
   def register(player, team_match, achievement, count, achieved = true)
     @player_statistic = PlayerStatistic.create(player: player, team_match: team_match,
-                                               achievement: achievement, count: count,
+                                               achievement: achievement, value: count,
                                                achieved: achieved)
     @player_statistic.save
   end
