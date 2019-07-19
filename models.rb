@@ -1,50 +1,15 @@
-# table Conference
-class Conference
-  include DataMapper::Resource
-
-  property :id, Serial
-  property :name, String
-
-  has Infinity, :teams
-
-  def register(name)
-    @conference = Conference.create(name: name)
-    @conference.save
-  end
-end
-
-# table Division
-class Division
-  include DataMapper::Resource
-
-  property :id, Serial
-  property :name, String
-
-  has Infinity, :teams
-
-  def register(name)
-    @division = Division.create(name: name)
-    @division.save
-  end
-end
-
 # table Team that keep information about all of teams of the league
 class Team
   include DataMapper::Resource
 
   property :id,         Serial
   property :name,       String
-  property :coach_name, String
 
   has Infinity, :team_matches
   has Infinity, :players
 
-  belongs_to :conference
-  belongs_to :division
-
-  def register(name, couch, conference, division)
-    @team = Team.create(name: name, coach_name: couch, conference: conference,
-                        division: division)
+  def register(name)
+    @team = Team.create(name: name)
     @team.save
   end
 end
@@ -55,15 +20,15 @@ class Player
 
   property :id,         Serial
   property :name,       String
-  property :age,        Integer
-  property :number,     Integer
 
   belongs_to :team
   belongs_to :position
 
-  def register(name, age, position, number, team)
-    @player = Player.create(name: name, age: age, position: position,
-                            number: number, team: team)
+  has Infinity, :player_statistics
+
+  def register(name, position, team)
+    @player = Player.create(name: name, position: position,
+                            team: team)
     @player.save
   end
 end
@@ -76,6 +41,8 @@ class Achievement
   property :name,     String
   property :countable, Boolean
 
+  has Infinity, :player_statistics
+
   def register(name, countable)
     @achievement = Achievement.create(name: name, countable: countable)
     @achievement.save
@@ -87,12 +54,14 @@ class TeamMatch
   include DataMapper::Resource
 
   property :id, Serial
-  property :opponent, Team.class
+  property :opponent, Integer
   property :date, Date
+
+  has Infinity, :player_statistics
 
   belongs_to :team
 
-  def register(opponent, team, date = Date.today)
+  def register(team, opponent, date = Date.today)
     @match = TeamMatch.create(opponent: opponent, date: date, team: team)
     @match.save
   end
@@ -109,5 +78,24 @@ class Position
   def register(name)
     @position = Position.create(name: name)
     @position.save
+  end
+end
+
+class PlayerStatistic
+  include DataMapper::Resource
+
+  property :id, Serial
+  property :value, Integer
+  property :achieved, Boolean
+
+  belongs_to :player
+  belongs_to :team_match
+  belongs_to :achievement
+
+  def register(player, team_match, achievement, count, achieved = true)
+    @player_statistic = PlayerStatistic.create(player: player, team_match: team_match,
+                                               achievement: achievement, count: count,
+                                               achieved: achieved)
+    @player_statistic.save
   end
 end

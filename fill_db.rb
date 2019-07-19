@@ -2,13 +2,13 @@ require './models'
 
 def fill_database
   puts 'Choose the option:'
-  puts '1. Enter new conference'
-  puts '2. Enter new division'
-  puts '3. Enter new position'
-  puts '4. Enter new team'
-  puts '5. Enter new player'
-  puts '6. Enter new achievement'
-  puts '7. Enter new match'
+  puts '1. Enter new team'
+  puts '2. Enter new position'
+  puts '3. Enter new player'
+  puts '4. Enter new achievement'
+  puts '5. Enter new match'
+  puts '6. Enter players match statistic'
+  puts '7. '
   puts '8. Return ot main menu'
   insert_data = gets.chomp.to_i
   filling_case(insert_data)
@@ -17,35 +17,25 @@ end
 def filling_case(data)
   case data
   when 1
-    enter_new_conference
-  when 2
-    enter_new_division
-  when 3
-    enter_new_position
-  when 4
     enter_new_team
-  when 5
+  when 2
+    enter_new_position
+  when 3
     enter_new_player
-  when 6
+  when 4
     enter_new_achievement
-  when 7
+  when 5
     enter_new_match
+  when 6
+    enter_player_statistic
+  when 7
+
   when 8
     return
   else
     puts 'You put wrong option. Please try again'
     fill_database
   end
-end
-
-def enter_new_conference
-  puts 'Enter the name of conference'
-  Conference.new.register(gets.chomp)
-end
-
-def enter_new_division
-  puts 'Enter the name of division'
-  Division.new.register(gets.chomp)
 end
 
 def enter_new_position
@@ -55,41 +45,15 @@ end
 
 def enter_new_team
   puts 'Enter the name of team'
-  name = gets.chomp
-
-  puts 'Enter full name of its coach'
-  coach = gets.chomp
-
-  conferences = Conference.all(order: @id)
-  puts 'Which conference this team belong:'
-  conference = Conference.get(list_the_collection(conferences))
-
-  divisions = Division.all(order: @id)
-  puts 'Which division this team belongs:'
-  division = divisions.get(list_the_collection(divisions))
-
-  Team.new.register(name, coach, conference, division)
+  Team.new.register(gets.chomp)
 end
 
 def enter_new_player
   puts 'Enter full name of player'
   name = gets.chomp
-
-  puts 'Enter age of the player'
-  age = gets.chomp
-
-  puts 'Enter the number of the player'
-  number = gets.chomp
-
-  positions = Position.all(order: @id)
-  puts 'On which position he plays:'
-  position = positions.get(list_the_collection(positions))
-
-  teams = Team.all(order: @id)
-  puts 'Choose team'
-  team = teams.get(list_the_collection(teams))
-
-  Player.new.register(name, age, position, number, team)
+  position = list_the_collection(positions = Position.all(order: @id))
+  team = list_the_collection(teams = Team.all(order: @id))
+  Player.new.register(name, position, team)
 end
 
 def enter_new_achievement
@@ -112,7 +76,38 @@ def enter_new_achievement
   Achievement.new.register(name, countable_achieve)
 end
 
+def enter_new_match
+  teams = Team.all(order: @id)
+  first_team = list_the_collection(teams)
+
+  puts 'Choose its opponent'
+  second_team = list_the_collection(teams.all(:id.not => first_team)).id
+
+  puts 'Enter date of match'
+  date = gets.chomp
+  date = Date.parse date
+
+  TeamMatch.new.register(first_team, second_team, date)
+end
+
+def enter_player_statistic
+  team = list_the_collection(Team.get(order: @id))
+  match = list_the_collection(TeamMatch.get(team: team, order: @id))
+  player = list_the_collection(Player.get(team: team, order: @id))
+  achievement = list_the_collection(Achievement.get(order: @id))
+  if achievement.countable
+    puts 'Enter the Value'
+    value = gets.chomp
+    PlayerStatistic.new.register(player, match, achievement, value)
+  else
+    puts 'Did he achieve it: (y/n)'
+    achieved = gets.chomp
+    PlayerStatistic.new.register(player, match, achievement, 0, achieved)
+  end
+end
+
 def list_the_collection(collection)
+  puts "Select #{collection.name}"
   collection.each do |col|
     puts col.id.to_s + '. ' + col.name
   end
@@ -125,5 +120,5 @@ def list_the_collection(collection)
       i = true
     end
   end
-  collection_id
+  collection.get(collection_id)
 end
