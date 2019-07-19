@@ -8,8 +8,7 @@ def fill_database
   puts '4. Enter new achievement'
   puts '5. Enter new match'
   puts '6. Enter players match statistic'
-  puts '7. '
-  puts '8. Return ot main menu'
+  puts '7. Return to main menu'
   insert_data = gets.chomp.to_i
   filling_case(insert_data)
 end
@@ -29,8 +28,6 @@ def filling_case(data)
   when 6
     enter_player_statistic
   when 7
-
-  when 8
     return
   else
     puts 'You put wrong option. Please try again'
@@ -106,7 +103,7 @@ def list_the_collection(collection)
       i = true
     end
   end
-  collection[collection_id-1]
+  collection[collection_id - 1]
 end
 
 def true_false_check
