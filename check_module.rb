@@ -1,9 +1,15 @@
 # @todo
 def check_player
-  player = list_the_collection(Player.all(order: @id))
-  achievements = list_the_collection(Achievement.all(order: @id))
+  player = list_the_collection(Player.all(order: :id))
+  achievement = list_the_collection(Achievement.all(order: :id))
+  if achievement.countable
+    puts 'Enter the value to check'
+    value = gets.chomp.to_i
+  end
 
-  achievement_query = PlayerStatistic.all(achievement: achievements, player: player, achieved: true)
+  achievement_query = PlayerStatistic.all(achievement: achievement,
+                                          player: player, achieved: true,
+                                          :value.gte => value)
 
   if achievement_query.empty?
     puts "#{player.name} doesn't achieve this stats"

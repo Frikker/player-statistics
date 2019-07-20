@@ -48,8 +48,8 @@ end
 def enter_new_player
   puts 'Enter full name of player'
   name = gets.chomp
-  position = list_the_collection(positions = Position.all(order: @id))
-  team = list_the_collection(teams = Team.all(order: @id))
+  position = list_the_collection(positions = Position.all(order: :id))
+  team = list_the_collection(teams = Team.all(order: :id))
   Player.new.register(name, position, team)
 end
 
@@ -61,7 +61,7 @@ def enter_new_achievement
 end
 
 def enter_new_match
-  teams = Team.all(order: @id)
+  teams = Team.all(order: :id)
   first_team = list_the_collection(teams)
 
   puts 'Choose its opponent'
@@ -75,13 +75,13 @@ def enter_new_match
 end
 
 def enter_player_statistic
-  team = list_the_collection(Team.all(order: @id))
-  match = list_the_collection(TeamMatch.all(team: team, order: @id) + TeamMatch.all(opponent: team.id))
-  player = list_the_collection(Player.all(team: team, order: @id))
-  achievement = list_the_collection(Achievement.all(order: @id))
+  team = list_the_collection(Team.all(order: :id))
+  match = list_the_collection(TeamMatch.all(team: team, order: :id) + TeamMatch.all(opponent: team.id))
+  player = list_the_collection(Player.all(team: team, order: :id))
+  achievement = list_the_collection(Achievement.all(order: :id))
   if achievement.countable
     puts 'Enter the Value'
-    value = gets.chomp
+    value = gets.chomp.to_i
     PlayerStatistic.new.register(player, match, achievement, value)
   else
     puts 'Did he achieve it: (y/n)'
@@ -109,7 +109,7 @@ end
 def true_false_check
   i = true
   while i
-    countable = gets.chomp
+    countable = gets.chomp.downcase
     i = false
     if countable == 'y'
       countable_achieve = true

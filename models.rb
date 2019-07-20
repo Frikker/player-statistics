@@ -63,7 +63,7 @@ class TeamMatch
   belongs_to :team
 
   def register(team, opponent, date = Date.today)
-    name = "#{team.name} vs. #{Team.get(opponent).name}. date"
+    name = "#{team.name} vs. #{Team.get(opponent).name}. #{date}"
     @match = TeamMatch.create(name: name, opponent: opponent, date: date, team: team)
     @match.save
   end
@@ -98,6 +98,6 @@ class PlayerStatistic
     @player_statistic = PlayerStatistic.create(player: player, team_match: team_match,
                                                achievement: achievement, value: count,
                                                achieved: achieved)
-    @player_statistic.save
+    @player_statistic.save!
   end
 end
