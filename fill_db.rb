@@ -7,8 +7,7 @@ def fill_database
   puts '3. Enter new player'
   puts '4. Enter new achievement'
   puts '5. Enter new match'
-  puts '6. Enter players match statistic'
-  puts '7. Return to main menu'
+  puts '6. Return to main menu'
   insert_data = gets.chomp.to_i
   filling_case(insert_data)
 end
@@ -26,8 +25,6 @@ def filling_case(data)
   when 5
     enter_new_match
   when 6
-    enter_player_statistic
-  when 7
     return
   else
     puts 'You put wrong option. Please try again'
