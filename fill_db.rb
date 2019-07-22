@@ -1,9 +1,5 @@
 require './models'
 
-class String
-
-end
-
 def fill_database
   puts 'Choose the option:'
   puts '1. Enter new team'
