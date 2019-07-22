@@ -1,5 +1,9 @@
 require './models'
 
+class String
+
+end
+
 def fill_database
   puts 'Choose the option:'
   puts '1. Enter new team'
@@ -34,17 +38,17 @@ end
 
 def enter_new_position
   puts 'Enter the name of position'
-  Position.new.register(gets.chomp)
+  Position.new.register(check_input)
 end
 
 def enter_new_team
   puts 'Enter the name of team'
-  Team.new.register(gets.chomp)
+  Team.new.register(check_input)
 end
 
 def enter_new_player
   puts 'Enter full name of player'
-  name = gets.chomp
+  name = check_input
   position = list_the_collection(positions = Position.all(order: :id))
   team = list_the_collection(teams = Team.all(order: :id))
   Player.new.register(name, position, team)
@@ -52,7 +56,7 @@ end
 
 def enter_new_achievement
   puts 'Enter the name of achievement'
-  name = gets.chomp
+  name = check_input
   puts 'Is it countable? (y/n)'
   Achievement.new.register(name, true_false_check)
 end
@@ -65,7 +69,7 @@ def enter_new_match
   second_team = list_the_collection(teams.all(:id.not => first_team)).id
 
   puts 'Enter date of match'
-  date = gets.chomp
+  date = check_input
   date = Date.parse date
 
   TeamMatch.new.register(first_team, second_team, date)
@@ -73,7 +77,8 @@ end
 
 def enter_player_statistic
   team = list_the_collection(Team.all(order: :id))
-  match = list_the_collection(TeamMatch.all(team: team, order: :id) + TeamMatch.all(opponent: team.id))
+  match = list_the_collection(TeamMatch.all(team: team, order: :id) +
+                              TeamMatch.all(opponent: team.id))
   player = list_the_collection(Player.all(team: team, order: :id))
   achievement = list_the_collection(Achievement.all(order: :id))
   if achievement.countable
@@ -118,4 +123,13 @@ def true_false_check
     end
   end
   countable_achieve
+end
+
+def check_input
+  input = gets.chomp
+  if input.empty?
+    puts 'You put wrong option. Please try again'
+    check_input
+  end
+  input
 end
